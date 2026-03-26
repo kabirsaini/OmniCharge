@@ -54,7 +54,9 @@ public class JwtAuthenticationFilter extends AbstractGatewayFilterFactory<JwtAut
             try {
                 String token = authHeader.substring(7);
                 Key key = Keys.hmacShaKeyFor(secret.getBytes());
-                Claims claims = Jwts.parserBuilder().setSigningKey(key).build()
+                Claims claims = Jwts.parserBuilder()
+                        .setSigningKey(key)
+                        .build()
                         .parseClaimsJws(token).getBody();
 
                 // Forward user info to downstream services via headers

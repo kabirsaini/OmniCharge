@@ -27,7 +27,9 @@ public class RabbitMQConfig {
 
     @Bean
     public Binding binding() {
-        return BindingBuilder.bind(rechargeQueue()).to(omnichargeExchange()).with(ROUTING_KEY);
+        return BindingBuilder.bind(rechargeQueue())
+                .to(omnichargeExchange())
+                .with(ROUTING_KEY);
     }
 
     @Bean

@@ -24,17 +24,25 @@ public class JwtAuthFilter extends OncePerRequestFilter {
     private String secret;
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request,
-                                    HttpServletResponse response,
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
                                     FilterChain chain) throws ServletException, IOException {
         String header = request.getHeader("Authorization");
         if (header != null && header.startsWith("Bearer ")) {
             try {
                 Key key = Keys.hmacShaKeyFor(secret.getBytes());
-                Claims claims = Jwts.parserBuilder().setSigningKey(key).build()
-                        .parseClaimsJws(header.substring(7)).getBody();
+                Claims claims = Jwts
+                        .parserBuilder()
+                        .setSigningKey(key)
+                        .build()
+                        .parseClaimsJws(header.substring(7))
+                        .getBody();
+
+
                 String role = claims.get("role", String.class);
-                SecurityContextHolder.getContext().setAuthentication(
+
+                SecurityContextHolder
+                        .getContext()
+                        .setAuthentication(
                         new UsernamePasswordAuthenticationToken(
                                 claims.getSubject(), null,
                                 List.of(new SimpleGrantedAuthority("ROLE_" + role))));

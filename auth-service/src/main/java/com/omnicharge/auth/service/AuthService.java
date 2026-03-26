@@ -48,6 +48,7 @@ public class AuthService implements UserDetailsService {
         }
 
         AuthCredential.Role requestedRole = AuthCredential.Role.USER;
+
         if (request.getRole() != null && request.getRole().equalsIgnoreCase("ADMIN")) {
             requestedRole = AuthCredential.Role.ADMIN;
         }
@@ -69,7 +70,8 @@ public class AuthService implements UserDetailsService {
                             .fullName(request.getFullName())
                             .mobile(request.getMobile())
                             .role(credential.getRole().name())
-                            .build());
+                            .build()
+            );
 
             // Step 3 — store the userId returned by user-service
             credential.setUserId(profile.getUserId());
@@ -191,9 +193,13 @@ public class AuthService implements UserDetailsService {
 
     private AuthResponse buildAuthResponse(AuthCredential credential) {
         String accessToken = jwtUtil.generateAccessToken(
-                credential.getEmail(), credential.getUserId(), credential.getRole().name());
+                credential.getEmail(),
+                credential.getUserId(),
+                credential.getRole().name()
+        );
 
         String rawRefresh = UUID.randomUUID().toString();
+
         String refreshToken = jwtUtil.generateRefreshToken(credential.getEmail());
 
         // Persist refresh token

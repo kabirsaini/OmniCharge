@@ -38,6 +38,14 @@ services:
       timeout: 5s
       retries: 5
 
+  zipkin:
+    image: openzipkin/zipkin:latest
+    container_name: omnicharge-zipkin
+    ports:
+      - "9411:9411"
+    networks:
+      - omnicharge-net
+
   service-discovery:
     build: ./service-discovery
     container_name: omnicharge-discovery
@@ -66,6 +74,7 @@ services:
       - config-server
     environment:
       EUREKA_URI: http://service-discovery:8761/eureka
+      ZIPKIN_URL: http://zipkin:9411/api/v2/spans
     networks:
       - omnicharge-net
 
@@ -84,6 +93,7 @@ services:
       SPRING_DATASOURCE_USERNAME: omnicharge
       SPRING_DATASOURCE_PASSWORD: omnicharge123
       EUREKA_URI: http://service-discovery:8761/eureka
+      ZIPKIN_URL: http://zipkin:9411/api/v2/spans
       JWT_SECRET: OmniChargeSecretKey2024SuperSecureBase64EncodedString==
     networks:
       - omnicharge-net
@@ -105,6 +115,7 @@ services:
       SPRING_DATASOURCE_USERNAME: omnicharge
       SPRING_DATASOURCE_PASSWORD: omnicharge123
       EUREKA_URI: http://service-discovery:8761/eureka
+      ZIPKIN_URL: http://zipkin:9411/api/v2/spans
       RABBITMQ_HOST: rabbitmq
       JWT_SECRET: OmniChargeSecretKey2024SuperSecureBase64EncodedString==
     networks:
@@ -127,6 +138,7 @@ services:
       SPRING_DATASOURCE_USERNAME: omnicharge
       SPRING_DATASOURCE_PASSWORD: omnicharge123
       EUREKA_URI: http://service-discovery:8761/eureka
+      ZIPKIN_URL: http://zipkin:9411/api/v2/spans
       RABBITMQ_HOST: rabbitmq
       JWT_SECRET: OmniChargeSecretKey2024SuperSecureBase64EncodedString==
     networks:
@@ -147,6 +159,7 @@ services:
       SPRING_DATASOURCE_USERNAME: omnicharge
       SPRING_DATASOURCE_PASSWORD: omnicharge123
       EUREKA_URI: http://service-discovery:8761/eureka
+      ZIPKIN_URL: http://zipkin:9411/api/v2/spans
       JWT_SECRET: OmniChargeSecretKey2024SuperSecureBase64EncodedString==
     networks:
       - omnicharge-net
@@ -163,6 +176,7 @@ services:
         condition: service_healthy
     environment:
       EUREKA_URI: http://service-discovery:8761/eureka
+      ZIPKIN_URL: http://zipkin:9411/api/v2/spans
       RABBITMQ_HOST: rabbitmq
     networks:
       - omnicharge-net
@@ -182,6 +196,7 @@ services:
       SPRING_DATASOURCE_USERNAME: omnicharge
       SPRING_DATASOURCE_PASSWORD: omnicharge123
       EUREKA_URI: http://service-discovery:8761/eureka
+      ZIPKIN_URL: http://zipkin:9411/api/v2/spans
       JWT_SECRET: OmniChargeSecretKey2024SuperSecureBase64EncodedString==
     networks:
       - omnicharge-net

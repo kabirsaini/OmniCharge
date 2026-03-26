@@ -13,6 +13,7 @@ public class NotificationService {
      * In production this would integrate with an SMS gateway (Twilio/AWS SNS)
      * or email service (SendGrid/SES). Here we log for demonstration.
      */
+
     public void sendRechargeConfirmation(RechargeEvent event) {
         if ("SUCCESS".equals(event.getStatus())) {
             String smsMessage = buildSmsMessage(event);
