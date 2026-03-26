@@ -40,6 +40,7 @@ class AuthServiceTest {
 
     @BeforeEach
     void setUp() {
+        org.springframework.test.util.ReflectionTestUtils.setField(authService, "authenticationManager", authenticationManager);
         sampleCredential = AuthCredential.builder()
                 .id(1L).email("user@example.com").password("encoded")
                 .role(AuthCredential.Role.USER).userId(10L).enabled(true).build();

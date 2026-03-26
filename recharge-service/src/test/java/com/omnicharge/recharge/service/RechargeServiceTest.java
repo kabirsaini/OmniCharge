@@ -68,7 +68,6 @@ class RechargeServiceTest {
                 .validityDays(28).operatorId(2L).build(); // different operator
         when(operatorClient.getOperatorById(1L)).thenReturn(mockOperator);
         when(operatorClient.getPlanById(10L)).thenReturn(wrongPlan);
-        when(rechargeRepository.save(any())).thenReturn(new Recharge());
 
         assertThatThrownBy(() -> rechargeService.initiateRecharge(1L, req))
                 .isInstanceOf(IllegalArgumentException.class);
@@ -89,5 +88,31 @@ class RechargeServiceTest {
         when(rechargeRepository.findByRechargeId("bad-id")).thenReturn(Optional.empty());
         assertThatThrownBy(() -> rechargeService.getRechargeByRechargeId("bad-id"))
                 .isInstanceOf(ResourceNotFoundException.class);
+    }
+
+    @Test
+    void getRechargeById_found_returnsRecharge() {
+        Recharge r = Recharge.builder().id(100L).rechargeId("RCH-100").status(Recharge.RechargeStatus.SUCCESS).build();
+        when(rechargeRepository.findById(100L)).thenReturn(Optional.of(r));
+        RechargeResponse response = rechargeService.getRechargeById(100L);
+        assertThat(response).isNotNull();
+        assertThat(response.getRechargeId()).isEqualTo("RCH-100");
+    }
+
+    @Test
+    void initiateRecharge_paymentThrowsException_returnsFailed() {
+        RechargeRequest req = new RechargeRequest("9876543210", 1L, 10L);
+        when(operatorClient.getOperatorById(1L)).thenReturn(mockOperator);
+        when(operatorClient.getPlanById(10L)).thenReturn(mockPlan);
+
+        Recharge saved = Recharge.builder().id(1L).rechargeId("RCH-FAIL").status(Recharge.RechargeStatus.PENDING).build();
+        when(rechargeRepository.save(any())).thenReturn(saved);
+        when(paymentClient.processPayment(any())).thenThrow(new RuntimeException("Payment Gateway Error"));
+
+        RechargeResponse result = rechargeService.initiateRecharge(1L, req);
+
+        assertThat(result).isNotNull();
+        assertThat(result.getStatus()).isEqualTo("FAILED");
+        verify(rabbitTemplate, never()).convertAndSend(anyString(), anyString(), any(Object.class));
     }
 }
