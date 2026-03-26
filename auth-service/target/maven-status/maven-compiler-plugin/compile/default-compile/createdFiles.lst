@@ -1,0 +1,9 @@
+com/omnicharge/auth/dto/AuthDtos$LoginRequest.class
+com/omnicharge/auth/dto/AuthDtos$RegisterRequest.class
+com/omnicharge/auth/dto/AuthDtos$RefreshRequest.class
+com/omnicharge/auth/model/RefreshToken.class
+com/omnicharge/auth/dto/AuthDtos$AuthResponse.class
+com/omnicharge/auth/dto/AuthDtos$UserInfo.class
+com/omnicharge/auth/dto/AuthDtos.class
+com/omnicharge/auth/dto/AuthDtos$ChangePasswordRequest.class
+com/omnicharge/auth/dto/AuthDtos$TokenValidationResponse.class

@@ -1,0 +1,17 @@
+# Shared configuration served to all microservices
+jwt:
+  secret: OmniChargeSecretKey2024SuperSecureBase64EncodedString==
+  expiration: 86400000
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
+  endpoint:
+    health:
+      show-details: always
+
+logging:
+  level:
+    com.omnicharge: DEBUG

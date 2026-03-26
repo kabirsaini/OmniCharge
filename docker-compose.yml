@@ -1,0 +1,194 @@
+version: '3.8'
+
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: omnicharge-mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_USER: omnicharge
+      MYSQL_PASSWORD: omnicharge123
+    ports:
+      - "3307:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - omnicharge-net
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: omnicharge-rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+    networks:
+      - omnicharge-net
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  service-discovery:
+    build: ./service-discovery
+    container_name: omnicharge-discovery
+    ports:
+      - "8761:8761"
+    networks:
+      - omnicharge-net
+
+  config-server:
+    build: ./config-server
+    container_name: omnicharge-config
+    ports:
+      - "8888:8888"
+    depends_on:
+      - service-discovery
+    networks:
+      - omnicharge-net
+
+  api-gateway:
+    build: ./api-gateway
+    container_name: omnicharge-gateway
+    ports:
+      - "8080:8080"
+    depends_on:
+      - service-discovery
+      - config-server
+    environment:
+      EUREKA_URI: http://service-discovery:8761/eureka
+    networks:
+      - omnicharge-net
+
+  user-service:
+    build: ./user-service
+    container_name: omnicharge-user
+    ports:
+      - "8081:8081"
+    depends_on:
+      mysql:
+        condition: service_healthy
+      service-discovery:
+        condition: service_started
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/omnicharge_users?createDatabaseIfNotExist=true&useSSL=false&allowPublicKeyRetrieval=true
+      SPRING_DATASOURCE_USERNAME: omnicharge
+      SPRING_DATASOURCE_PASSWORD: omnicharge123
+      EUREKA_URI: http://service-discovery:8761/eureka
+      JWT_SECRET: OmniChargeSecretKey2024SuperSecureBase64EncodedString==
+    networks:
+      - omnicharge-net
+
+  recharge-service:
+    build: ./recharge-service
+    container_name: omnicharge-recharge
+    ports:
+      - "8082:8082"
+    depends_on:
+      mysql:
+        condition: service_healthy
+      service-discovery:
+        condition: service_started
+      rabbitmq:
+        condition: service_healthy
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/omnicharge_recharge?createDatabaseIfNotExist=true&useSSL=false&allowPublicKeyRetrieval=true
+      SPRING_DATASOURCE_USERNAME: omnicharge
+      SPRING_DATASOURCE_PASSWORD: omnicharge123
+      EUREKA_URI: http://service-discovery:8761/eureka
+      RABBITMQ_HOST: rabbitmq
+      JWT_SECRET: OmniChargeSecretKey2024SuperSecureBase64EncodedString==
+    networks:
+      - omnicharge-net
+
+  payment-service:
+    build: ./payment-service
+    container_name: omnicharge-payment
+    ports:
+      - "8083:8083"
+    depends_on:
+      mysql:
+        condition: service_healthy
+      service-discovery:
+        condition: service_started
+      rabbitmq:
+        condition: service_healthy
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/omnicharge_payments?createDatabaseIfNotExist=true&useSSL=false&allowPublicKeyRetrieval=true
+      SPRING_DATASOURCE_USERNAME: omnicharge
+      SPRING_DATASOURCE_PASSWORD: omnicharge123
+      EUREKA_URI: http://service-discovery:8761/eureka
+      RABBITMQ_HOST: rabbitmq
+      JWT_SECRET: OmniChargeSecretKey2024SuperSecureBase64EncodedString==
+    networks:
+      - omnicharge-net
+
+  operator-service:
+    build: ./operator-service
+    container_name: omnicharge-operator
+    ports:
+      - "8084:8084"
+    depends_on:
+      mysql:
+        condition: service_healthy
+      service-discovery:
+        condition: service_started
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/omnicharge_operators?createDatabaseIfNotExist=true&useSSL=false&allowPublicKeyRetrieval=true
+      SPRING_DATASOURCE_USERNAME: omnicharge
+      SPRING_DATASOURCE_PASSWORD: omnicharge123
+      EUREKA_URI: http://service-discovery:8761/eureka
+      JWT_SECRET: OmniChargeSecretKey2024SuperSecureBase64EncodedString==
+    networks:
+      - omnicharge-net
+
+  notification-service:
+    build: ./notification-service
+    container_name: omnicharge-notification
+    ports:
+      - "8085:8085"
+    depends_on:
+      service-discovery:
+        condition: service_started
+      rabbitmq:
+        condition: service_healthy
+    environment:
+      EUREKA_URI: http://service-discovery:8761/eureka
+      RABBITMQ_HOST: rabbitmq
+    networks:
+      - omnicharge-net
+
+  auth-service:
+    build: ./auth-service
+    container_name: omnicharge-auth
+    ports:
+      - "8086:8086"
+    depends_on:
+      mysql:
+        condition: service_healthy
+      service-discovery:
+        condition: service_started
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/omnicharge_auth?createDatabaseIfNotExist=true&useSSL=false&allowPublicKeyRetrieval=true
+      SPRING_DATASOURCE_USERNAME: omnicharge
+      SPRING_DATASOURCE_PASSWORD: omnicharge123
+      EUREKA_URI: http://service-discovery:8761/eureka
+      JWT_SECRET: OmniChargeSecretKey2024SuperSecureBase64EncodedString==
+    networks:
+      - omnicharge-net
+networks:
+  omnicharge-net:
+    driver: bridge
+
+volumes:
+  mysql_data:
+
