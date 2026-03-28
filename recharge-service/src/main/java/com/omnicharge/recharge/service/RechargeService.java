@@ -67,7 +67,8 @@ public class RechargeService {
                             .userId(userId)
                             .amount(plan.getPrice())
                             .description("Recharge for " + request.getMobileNumber() + " - " + plan.getName())
-                            .build());
+                            .build()
+            );
 
             recharge.setTransactionId(payment.getTransactionId());
             recharge.setStatus(Recharge.RechargeStatus.SUCCESS);

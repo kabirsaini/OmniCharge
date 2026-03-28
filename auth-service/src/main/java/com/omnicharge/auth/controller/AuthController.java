@@ -8,9 +8,11 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.*;
 import org.springframework.security.core.Authentication;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
+@Controller
 @RequestMapping("/api/auth")
 @RequiredArgsConstructor
 @Tag(name = "Auth API", description = "Registration, login, token refresh, logout and validation")
@@ -61,11 +63,13 @@ public class AuthController {
     @PutMapping("/password")
     @Operation(summary = "Change password — revokes all sessions on success")
     public ResponseEntity<Void> changePassword(Authentication authentication,
-                                                @Valid @RequestBody ChangePasswordRequest request) {
+                                               @Valid @RequestBody ChangePasswordRequest request) {
         authService.changePassword(
                 authentication.getName(),
                 request.getCurrentPassword(),
                 request.getNewPassword());
         return ResponseEntity.noContent().build();
     }
+
+
 }

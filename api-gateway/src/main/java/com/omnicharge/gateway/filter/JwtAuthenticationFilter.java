@@ -3,6 +3,8 @@ package com.omnicharge.gateway.filter;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.gateway.filter.GatewayFilter;
 import org.springframework.cloud.gateway.filter.factory.AbstractGatewayFilterFactory;
@@ -16,20 +18,23 @@ import java.security.Key;
 import java.util.List;
 
 @Component
-@Slf4j
 public class JwtAuthenticationFilter extends AbstractGatewayFilterFactory<JwtAuthenticationFilter.Config> {
+    
+    private static final Logger log = LoggerFactory.getLogger(JwtAuthenticationFilter.class);
 
     @Value("${jwt.secret}")
     private String secret;
 
+    private final org.springframework.util.AntPathMatcher pathMatcher = new org.springframework.util.AntPathMatcher();
+
     private static final List<String> OPEN_ENDPOINTS = List.of(
-            "/api/auth/register",
-            "/api/auth/login",
+            "/api/auth/**",
             "/api/operators",
             "/api/plans",
-            "/actuator",
-            "/v3/api-docs",
-            "/swagger-ui"
+            "/actuator/**",
+            "/v3/api-docs/**",
+            "/swagger-ui/**",
+            "/swagger-ui.html"
     );
 
     public JwtAuthenticationFilter() {
@@ -41,8 +46,8 @@ public class JwtAuthenticationFilter extends AbstractGatewayFilterFactory<JwtAut
         return (exchange, chain) -> {
             String path = exchange.getRequest().getURI().getPath();
 
-            // Allow open endpoints through without token
-            if (OPEN_ENDPOINTS.stream().anyMatch(path::startsWith)) {
+            // Allow open endpoints through without token (using AntPathMatcher for pattern matching)
+            if (OPEN_ENDPOINTS.stream().anyMatch(pattern -> pathMatcher.match(pattern, path))) {
                 return chain.filter(exchange);
             }
 

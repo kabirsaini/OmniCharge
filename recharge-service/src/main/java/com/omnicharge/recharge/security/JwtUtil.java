@@ -34,7 +34,10 @@ public class JwtUtil {
     // It parses the JWT token, validates its signature using the signing key, and applies the resolver function
     // to the claims (payload) of the token to extract specific information (such as username, user ID, or role) based on the provided resolver function.
     private <T> T extract(String token, Function<Claims, T> resolver) {
-        return resolver.apply(Jwts.parserBuilder().setSigningKey(key()).build()
+        return resolver.apply(
+                Jwts.parserBuilder()
+                        .setSigningKey(key())
+                        .build()
                 .parseClaimsJws(token).getBody());
     }
 }

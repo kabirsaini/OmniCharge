@@ -34,9 +34,20 @@ class RechargeServiceTest {
 
     @BeforeEach
     void setUp() {
-        mockOperator = OperatorDto.builder().id(1L).name("Airtel").code("AT").build();
-        mockPlan = PlanDto.builder().id(10L).name("299 Plan").price(new BigDecimal("299.00"))
-                .validityDays(28).operatorId(1L).operatorName("Airtel").build();
+        mockOperator = OperatorDto.builder()
+                .id(1L)
+                .name("Airtel")
+                .code("AT")
+                .build();
+
+        mockPlan = PlanDto.builder()
+                .id(10L)
+                .name("299 Plan")
+                .price(new BigDecimal("299.00"))
+                .validityDays(28)
+                .operatorId(1L)
+                .operatorName("Airtel")
+                .build();
     }
 
     @Test

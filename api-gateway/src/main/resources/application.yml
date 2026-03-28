@@ -1,86 +1,15 @@
-server:
-  port: 8080
-
 spring:
   application:
     name: api-gateway
+  config:
+    import: "optional:configserver:${CONFIG_SERVER_URL:http://localhost:8888}"
   cloud:
-    gateway:
+    config:
       discovery:
-        locator:
-          enabled: true
-          lower-case-service-id: true
-      routes:
-        - id: auth-service
-          uri: lb://auth-service
-          predicates:
-            - Path=/api/auth/**
-          filters:
-            - JwtAuthenticationFilter
-
-        - id: user-service
-          uri: lb://user-service
-          predicates:
-            - Path=/api/auth/**, /api/users/**, /api/admin/users/**
-          filters:
-            - JwtAuthenticationFilter
-
-        - id: recharge-service
-          uri: lb://recharge-service
-          predicates:
-            - Path=/api/recharges/**
-          filters:
-            - JwtAuthenticationFilter
-
-        - id: payment-service
-          uri: lb://payment-service
-          predicates:
-            - Path=/api/payments/**
-          filters:
-            - JwtAuthenticationFilter
-
-        - id: operator-service
-          uri: lb://operator-service
-          predicates:
-            - Path=/api/operators/**, /api/plans/**, /api/admin/operators/**, /api/admin/plans/**
-          filters:
-            - JwtAuthenticationFilter
-
-      globalcors:
-        cors-configurations:
-          '[/**]':
-            allowedOrigins: "*"
-            allowedMethods:
-              - GET
-              - POST
-              - PUT
-              - DELETE
-              - OPTIONS
-            allowedHeaders: "*"
+        enabled: true
+        service-id: config-server
 
 eureka:
   client:
     service-url:
       defaultZone: ${EUREKA_URI:http://localhost:8761/eureka}
-  instance:
-    prefer-ip-address: true
-
-jwt:
-  secret: ${JWT_SECRET:OmniChargeSecretKey2024SuperSecureBase64EncodedString==}
-
-management:
-  tracing:
-    sampling:
-      probability: 1.0
-  zipkin:
-    tracing:
-      endpoint: ${ZIPKIN_URL:http://localhost:9411/api/v2/spans}
-  endpoints:
-    web:
-      exposure:
-        include: health,info,metrics,gateway
-
-logging:
-  level:
-    org.springframework.cloud.gateway: INFO
-    com.omnicharge: DEBUG

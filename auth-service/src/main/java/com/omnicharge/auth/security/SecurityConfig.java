@@ -26,13 +26,17 @@ public class SecurityConfig {
         http
                 .csrf(c -> c.disable())
                 .authorizeHttpRequests(auth -> auth
+                        // Public endpoints for authentication
                         .requestMatchers("/api/auth/**", "/actuator/**",
                                 "/v3/api-docs/**", "/swagger-ui/**").permitAll()
+
+                        //AnyOther request endpoint requires authentication
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .authenticationProvider(authProvider);
-
+                .authenticationProvider(authProvider); //It registers your custom AuthenticationProvider with Spring Security.
+        //👉 You are telling Spring Security:
+        //“Whenever authentication is needed, use this provider to verify users.”
         return http.build();
     }
 

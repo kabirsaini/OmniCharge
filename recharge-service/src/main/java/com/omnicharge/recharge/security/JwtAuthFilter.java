@@ -38,7 +38,8 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                 Key key = Keys.hmacShaKeyFor(secret.getBytes()); // The filter uses the secret key to create a signing key for validating the JWT.
 
                 // The filter parses the JWT, validates its signature, and extracts the claims (payload) from the token.
-                // If the token is valid, it retrieves the user's role from the claims and sets the authentication in the security context, allowing the user to access protected resources based on their role.
+                // If the token is valid, it retrieves the user's role from the claims and sets the authentication
+                // in the security context, allowing the user to access protected resources based on their role.
                 Claims c = Jwts.parserBuilder()
                         .setSigningKey(key)
                         .build()

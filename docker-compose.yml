@@ -75,6 +75,7 @@ services:
     environment:
       EUREKA_URI: http://service-discovery:8761/eureka
       ZIPKIN_URL: http://zipkin:9411/api/v2/spans
+      CONFIG_SERVER_URL: http://config-server:8888
     networks:
       - omnicharge-net
 
@@ -95,6 +96,7 @@ services:
       EUREKA_URI: http://service-discovery:8761/eureka
       ZIPKIN_URL: http://zipkin:9411/api/v2/spans
       JWT_SECRET: OmniChargeSecretKey2024SuperSecureBase64EncodedString==
+      CONFIG_SERVER_URL: http://config-server:8888
     networks:
       - omnicharge-net
 
@@ -118,6 +120,7 @@ services:
       ZIPKIN_URL: http://zipkin:9411/api/v2/spans
       RABBITMQ_HOST: rabbitmq
       JWT_SECRET: OmniChargeSecretKey2024SuperSecureBase64EncodedString==
+      CONFIG_SERVER_URL: http://config-server:8888
     networks:
       - omnicharge-net
 
@@ -141,6 +144,7 @@ services:
       ZIPKIN_URL: http://zipkin:9411/api/v2/spans
       RABBITMQ_HOST: rabbitmq
       JWT_SECRET: OmniChargeSecretKey2024SuperSecureBase64EncodedString==
+      CONFIG_SERVER_URL: http://config-server:8888
     networks:
       - omnicharge-net
 
@@ -161,6 +165,7 @@ services:
       EUREKA_URI: http://service-discovery:8761/eureka
       ZIPKIN_URL: http://zipkin:9411/api/v2/spans
       JWT_SECRET: OmniChargeSecretKey2024SuperSecureBase64EncodedString==
+      CONFIG_SERVER_URL: http://config-server:8888
     networks:
       - omnicharge-net
 
@@ -178,6 +183,7 @@ services:
       EUREKA_URI: http://service-discovery:8761/eureka
       ZIPKIN_URL: http://zipkin:9411/api/v2/spans
       RABBITMQ_HOST: rabbitmq
+      CONFIG_SERVER_URL: http://config-server:8888
     networks:
       - omnicharge-net
 
@@ -198,6 +204,7 @@ services:
       EUREKA_URI: http://service-discovery:8761/eureka
       ZIPKIN_URL: http://zipkin:9411/api/v2/spans
       JWT_SECRET: OmniChargeSecretKey2024SuperSecureBase64EncodedString==
+      CONFIG_SERVER_URL: http://config-server:8888
     networks:
       - omnicharge-net
 networks:

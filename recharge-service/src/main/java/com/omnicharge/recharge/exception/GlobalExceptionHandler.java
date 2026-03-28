@@ -7,7 +7,9 @@ import java.time.LocalDateTime;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
     public record ErrorResponse(int status, String message, LocalDateTime timestamp) {
-        public ErrorResponse(int s, String m) { this(s, m, LocalDateTime.now()); }
+        public ErrorResponse(int s, String m) {
+            this(s, m, LocalDateTime.now());
+        }
     }
     @ExceptionHandler(ResourceNotFoundException.class)
     public ResponseEntity<ErrorResponse> notFound(ResourceNotFoundException e) {

@@ -27,13 +27,20 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         if (h != null && h.startsWith("Bearer ")) {
             try {
                 Key key = Keys.hmacShaKeyFor(secret.getBytes());
-                Claims c = Jwts.parserBuilder().setSigningKey(key).build()
+                Claims c = Jwts.parserBuilder()
+                        .setSigningKey(key)
+                        .build()
                         .parseClaimsJws(h.substring(7)).getBody();
+
                 String role = c.get("role", String.class);
+
                 SecurityContextHolder.getContext().setAuthentication(
                         new UsernamePasswordAuthenticationToken(c.getSubject(), null,
                                 List.of(new SimpleGrantedAuthority("ROLE_" + role))));
-            } catch (Exception ignored) {}
+            }
+            catch (Exception e) {
+                e.printStackTrace();
+            }
         }
         chain.doFilter(req, res);
     }

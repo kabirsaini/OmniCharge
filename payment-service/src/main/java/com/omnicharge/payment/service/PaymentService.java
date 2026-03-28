@@ -42,7 +42,7 @@ public class PaymentService {
         transactionRepository.save(txn);
 
         try {
-            // Simulate payment gateway processing
+            // Simulate payment gateway processing to check for transaction
             simulatePaymentGateway(request.getAmount());
 
             txn.setStatus(Transaction.TransactionStatus.SUCCESS);

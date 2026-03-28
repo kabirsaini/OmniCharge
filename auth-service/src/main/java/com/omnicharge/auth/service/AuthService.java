@@ -181,6 +181,8 @@ public class AuthService implements UserDetailsService {
         log.info("Password changed for {}", email);
     }
 
+
+
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
         AuthCredential credential = credentialRepository.findByEmail(email)
